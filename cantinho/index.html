@@ -193,6 +193,8 @@ main,.top,.foot{position:relative;z-index:1}
 
 .foot{padding-top:24px;padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));text-align:center;font-size:13px;color:var(--tinta);opacity:.8}
 .foot p+p{margin-top:4px}
+.direitos{max-width:900px;margin:14px auto 0;padding-top:12px;border-top:1px solid rgba(15,63,61,.25);display:grid;gap:5px;font-size:12px;line-height:1.5}
+.direitos p{margin:0!important}
 .areia{height:46px;background:var(--areia);border-radius:50% 50% 0 0/100% 100% 0 0;position:relative;z-index:1;margin-top:10px}
 
 @media (prefers-reduced-motion:reduce){
@@ -284,6 +286,11 @@ main,.top,.foot{position:relative;z-index:1}
 <footer class="foot band">
   <p>Sem cadastro, sem anúncios e sem coleta de dados. As estrelas ficam só neste aparelho.</p>
   <p>Imobiliária Sperandio® · CRECI-SC 4484-J · Itapoá, SC</p>
+  <div class="direitos">
+    <p>© 2026 Imobiliária Sperandio Ltda. Todos os direitos reservados.</p>
+    <p>Site desenvolvido por Marcos Eduardo de Almeida, com a tecnologia fundamental da Anthropic (Claude).</p>
+    <p>É proibida a cópia, a reprodução, a engenharia reversa, a coleta automatizada de dados e a redistribuição do sistema, do código e dos dados, no todo ou em parte, sem autorização por escrito (Leis nº 9.609/1998 e 9.610/1998).</p>
+  </div>
 </footer>
 
 <div class="fim" id="fim" role="dialog" aria-modal="true" aria-labelledby="fim-t" hidden>
