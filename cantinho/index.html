@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Jogos para crianças com os mascotes da Imobiliária Sperandio: memória, monte o nome, quem sou eu, quebra-cabeça e bolhas.">
+<meta name="theme-color" content="#86DDD4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22115.37%20659.09%201769.26%20513.51%22%20role%3D%22img%22%20aria-label%3D%22S%C3%ADmbolo%20Sperandio%22%3E%0A%0A%3Cpath%20fill%3D%22%23E20B1A%22%20d%3D%22M%201701.113281%201122.527344%20L%201834.558594%201122.527344%20L%201178.453125%20709.164062%20L%201044.957031%20709.164062%20L%20388.796875%201122.527344%20L%20522.296875%201122.527344%20L%201000.054688%20821.582031%20L%201477.757812%201122.527344%20L%201611.203125%201122.527344%20L%201066.75%20779.527344%20L%201111.703125%20751.21875%20Z%20M%201701.113281%201122.527344%20%22%3E%3C/path%3E%0A%3Cpath%20fill%3D%22%23E20B1A%22%20d%3D%22M%20821.601562%20709.164062%20L%20165.441406%201122.527344%20L%20298.941406%201122.527344%20L%20955.042969%20709.164062%20Z%20M%20821.601562%20709.164062%20%22%3E%3C/path%3E%0A%3C/svg%3E">
+<title>Cantinho dos Mascotes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: o fundo do mar (turquesa esverdeado) com bolhas; os 9 mascotes formam SPERANDIO; cinco jogos em cartões grandes.
+   Cada jogo tem 5 níveis. Tudo em um arquivo, sem cadastro e sem coleta de dados. As estrelas ficam só no aparelho. */
+:root{
+  --ag1:#CFF6F0;
+  --ag2:#86DDD4;
+  --ag3:#47C0B8;
+  --ag4:#1E8F8C;
+  --tinta:#0F3F3D;
+  --branco:#FFFFFF;
+  --vermelho:#E20B1A;
+  --preto:#1C1C1B;
+  --areia:#EBDDC2;
+  --display:"Futura Md BT","Futura PT",Futura,Jost,"Century Gothic",sans-serif;
+  --texto:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;color:var(--tinta);font-family:var(--texto);line-height:1.45;-webkit-font-smoothing:antialiased;
+  background:linear-gradient(180deg,var(--ag1) 0%,var(--ag2) 42%,var(--ag3) 100%) fixed;overflow-x:hidden}
+img,svg{display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance}
+:focus-visible{outline:4px solid var(--vermelho);outline-offset:3px;border-radius:12px}
+[hidden]{display:none!important}
+.band{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{width:min(1100px,100%);margin-inline:auto}
+
+/* bolhas de fundo */
+.bubbles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.bubbles i{position:absolute;bottom:-60px;border-radius:50%;border:2px solid rgba(255,255,255,.55);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.5),rgba(255,255,255,.08) 60%);animation:sobe linear infinite}
+@keyframes sobe{to{transform:translateY(-110vh) translateX(var(--dx,20px))}}
+main,.top,.foot{position:relative;z-index:1}
+
+/* topo */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:6px}
+.logo-chip{display:block;background:var(--branco);border-radius:16px;padding:8px 14px;box-shadow:0 8px 22px rgba(15,63,61,.18)}
+.logo-chip svg{height:34px;width:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--display);font-weight:700;font-size:17px;text-decoration:none;white-space:nowrap;border:0;border-radius:999px;padding:13px 22px;background:var(--branco);color:var(--tinta);box-shadow:0 8px 20px rgba(15,63,61,.16);transition:transform .18s var(--ease),filter .18s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn.red{background:var(--vermelho);color:var(--branco)}
+.btn.red:hover{filter:brightness(.92)}
+.btn svg{width:18px;height:18px}
+.top-r{display:flex;align-items:center;gap:8px}
+.t-c{display:none}
+@media (max-width:560px){#som{padding:12px 14px}#som-t{display:none}.top .btn{font-size:15px}}
+@media (max-width:480px){.t-l{display:none}.t-c{display:inline}.top .btn{padding:11px 14px}.logo-chip{padding:7px 10px}.logo-chip svg{height:28px}}
+
+/* início */
+.hero{text-align:center;padding-top:clamp(16px,4vw,40px);padding-bottom:clamp(12px,3vw,28px)}
+.hero h1{font-size:clamp(40px,8.6vw,92px);font-weight:800;line-height:.95;letter-spacing:-.035em;color:var(--tinta)}
+.hero h1 em{font-style:normal;color:var(--vermelho)}
+.hero p{font-size:clamp(17px,2.2vw,22px);margin-top:14px;color:var(--tinta);opacity:.85}
+.nome{display:flex;flex-wrap:nowrap;justify-content:center;align-items:flex-end;gap:clamp(0px,.5vw,8px);margin:clamp(20px,4vw,36px) auto 0;max-width:1100px}
+.mx{flex:1 1 0;min-width:0;max-width:100px;text-align:center;animation:flutua 4.5s ease-in-out infinite;animation-delay:calc(var(--i) * -.45s)}
+.mx img{width:100%;height:clamp(40px,10.6vw,112px);object-fit:contain;filter:drop-shadow(0 8px 10px rgba(15,63,61,.22))}
+.mx b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(12px,2.6vw,26px);color:var(--tinta);margin-top:4px}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.sec-t{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em;text-align:center;margin:clamp(26px,5vw,52px) 0 clamp(14px,2vw,22px)}
+.games{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding-bottom:12px}
+@media (max-width:960px){.games{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}}
+.gcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:var(--branco);border:0;border-radius:24px;padding:16px 10px 14px;box-shadow:0 14px 30px rgba(15,63,61,.16);transition:transform .22s var(--ease),box-shadow .22s ease}
+.gcard:hover{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 22px 40px rgba(15,63,61,.24)}
+.gimg{position:relative;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle,var(--ag1),var(--ag2));display:grid;place-items:center}
+.gimg img{position:absolute;left:11%;top:11%;width:78%;height:78%;object-fit:contain}
+.gcard h3{font-size:20px;font-weight:800;line-height:1.05}
+.gcard p{font-size:13.5px;opacity:.8}
+.gstar{display:flex;gap:2px;align-items:center;font-size:13px;font-weight:700;color:var(--ag4)}
+.star{width:18px;height:18px}
+.star.on{fill:#F5B301;stroke:#C98F00}
+.star.off{fill:none;stroke:#9CC7C4}
+
+/* níveis */
+.lvhead{text-align:center;padding-top:clamp(10px,3vw,26px)}
+.lvhead h2{font-size:clamp(32px,6vw,60px);font-weight:800;letter-spacing:-.03em}
+.lvhead p{margin-top:8px;font-size:18px;opacity:.85}
+.lvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:clamp(18px,3vw,30px)}
+.lv{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--branco);border:0;border-radius:26px;padding:20px 12px 16px;box-shadow:0 12px 26px rgba(15,63,61,.15);transition:transform .2s var(--ease)}
+.lv:hover{transform:translateY(-5px)}
+.lv b{font-family:var(--display);font-weight:800;font-size:54px;line-height:1;color:var(--vermelho)}
+.lv span{font-family:var(--display);font-weight:700;font-size:17px}
+.lv .gstar{margin-top:2px}
+.dif{display:flex;gap:4px}
+.dif i{width:9px;height:9px;border-radius:50%;background:#B7E4DF}
+.dif i.on{background:var(--ag4)}
+.back{margin:clamp(14px,3vw,26px) 0 0}
+
+/* jogo */
+.gbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding-top:10px}
+.gbar h2{font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-.02em}
+.gbar .sub{font-size:15px;font-weight:700;opacity:.8}
+.arena{margin-top:12px;padding-bottom:30px}
+.info{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;font-weight:700;font-size:17px;margin-bottom:12px}
+.info span{background:rgba(255,255,255,.7);border-radius:999px;padding:6px 16px}
+.dica{text-align:center;font-size:clamp(16px,2vw,20px);font-weight:700;margin:4px 0 12px}
+
+/* memória */
+.mgrid{display:grid;grid-template-columns:repeat(var(--cols,4),1fr);gap:clamp(8px,1.6vw,14px);width:min(100%,760px);margin-inline:auto}
+.mc{position:relative;aspect-ratio:3/4;border:0;padding:0;background:none;perspective:800px}
+.mc-in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s var(--ease)}
+.mc.up .mc-in{transform:rotateY(180deg)}
+.mc-b,.mc-f{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:grid;place-items:center;box-shadow:0 8px 16px rgba(15,63,61,.2)}
+.mc-b{background:var(--vermelho);border:4px solid var(--branco)}
+.mc-b svg{width:62%;height:auto;color:var(--branco)}
+.mc-f{transform:rotateY(180deg);background:var(--branco)}
+.mc-f img{position:absolute;left:9%;top:9%;width:82%;height:82%;object-fit:contain}
+.mc.ok .mc-f{box-shadow:0 0 0 4px #5BD38A,0 8px 16px rgba(15,63,61,.2)}
+.mc.ok{animation:pula .5s var(--ease)}
+@keyframes pula{40%{transform:scale(1.08)}}
+
+/* monte o nome */
+.palavra{display:flex;flex-wrap:nowrap;white-space:nowrap;justify-content:center;gap:clamp(2px,1vw,6px);font-family:var(--display);font-weight:800;font-size:clamp(22px,6vw,56px);letter-spacing:.06em;margin-bottom:10px;color:var(--vermelho)}
+.slots,.tray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(6px,1.2vw,12px);margin:0 auto;max-width:1060px}
+.slots{flex-wrap:nowrap;gap:clamp(3px,1vw,12px)}
+.slots .slot{flex:1 1 0;min-width:0;width:auto;max-width:96px;height:auto;aspect-ratio:.82;border-radius:clamp(10px,1.8vw,18px)}
+.slot,.tile{position:relative;width:clamp(66px,9.6vw,96px);height:clamp(82px,11.8vw,118px);border-radius:18px;border:0;padding:0}
+.slot{background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 3px rgba(255,255,255,.9);display:grid;place-items:center}
+.slot.full{background:var(--branco);box-shadow:0 0 0 4px #5BD38A,0 8px 16px rgba(15,63,61,.18)}
+.slot .lt{position:absolute;top:4px;left:0;right:0;text-align:center;font-family:var(--display);font-weight:800;font-size:clamp(12px,2.6vw,22px);color:var(--ag4);opacity:var(--lo,1)}
+.slot img,.tile img{position:absolute;left:8%;top:8%;width:84%;height:84%;object-fit:contain;pointer-events:none}
+.slot img{top:24%;height:70%}
+.tile{background:var(--branco);box-shadow:0 8px 16px rgba(15,63,61,.2);display:grid;place-items:center;touch-action:none;cursor:grab}
+.tile.sel{box-shadow:0 0 0 5px var(--vermelho),0 8px 16px rgba(15,63,61,.2)}
+.tile.drag{opacity:.35}
+.ghost{position:fixed;z-index:60;pointer-events:none;transform:translate(-50%,-50%) scale(1.08);width:90px;height:110px;background:var(--branco);border-radius:18px;box-shadow:0 18px 30px rgba(15,63,61,.35);display:grid;place-items:center}
+.ghost img{position:absolute;left:8%;top:8%;width:84%;height:84%;object-fit:contain}
+.tray{margin-top:22px;padding:16px;border-radius:26px;background:rgba(255,255,255,.35);min-height:110px;align-items:center}
+.shake{animation:treme .4s}
+@keyframes treme{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.peek{margin-top:14px;text-align:center}
+
+/* quem sou eu */
+.stage{position:relative;width:min(300px,78vw);aspect-ratio:1;margin:6px auto 16px;border-radius:32px;background:radial-gradient(circle,#F5FFFD,var(--ag1));box-shadow:0 14px 30px rgba(15,63,61,.2);overflow:hidden;display:grid;place-items:center}
+.stage img{position:absolute;left:8%;top:8%;width:84%;height:84%;object-fit:contain;transition:filter .6s ease,transform .6s var(--ease)}
+.stage img.sil{filter:brightness(0) opacity(.82)}
+.opts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.opt{width:clamp(104px,28vw,140px);background:var(--branco);border:0;border-radius:22px;padding:10px 8px 10px;box-shadow:0 8px 18px rgba(15,63,61,.16);display:grid;gap:4px;justify-items:center;transition:transform .18s var(--ease)}
+.opt:hover{transform:translateY(-4px)}
+.opt img{width:80px;height:80px;object-fit:contain}
+.opt b{font-family:var(--display);font-size:16px;line-height:1.05}
+.opt.certo{box-shadow:0 0 0 5px #5BD38A,0 8px 18px rgba(15,63,61,.16)}
+.opt.erro{opacity:.4;pointer-events:none}
+
+/* quebra-cabeça */
+.pzwrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.pz{display:grid;gap:3px;padding:6px;background:var(--branco);border-radius:20px;box-shadow:0 14px 30px rgba(15,63,61,.2)}
+.pc{position:relative;overflow:hidden;border:0;padding:0;border-radius:10px;background:var(--ag1);transition:transform .2s var(--ease)}
+.pc .art{position:absolute;background:linear-gradient(135deg,#F5FFFD,var(--ag2));display:grid;place-items:center}
+.pc .art img{position:absolute;left:7%;top:7%;width:86%;height:86%;object-fit:contain}
+.pc.sel{outline:4px solid var(--vermelho);outline-offset:-4px;transform:scale(.94)}
+.pc.ok{box-shadow:inset 0 0 0 3px rgba(91,211,138,.9)}
+.modelo{position:relative;width:130px;aspect-ratio:1;border-radius:18px;background:linear-gradient(135deg,#F5FFFD,var(--ag2));display:grid;place-items:center;box-shadow:0 8px 18px rgba(15,63,61,.18)}
+.modelo img{position:absolute;left:7%;top:7%;width:86%;height:86%;object-fit:contain}
+
+/* bolhas */
+.sea{position:relative;width:min(100%,820px);height:min(64vh,540px);margin:0 auto;border-radius:30px;overflow:hidden;background:linear-gradient(180deg,#B5F0E9,var(--ag3) 70%,#2FA8A2);box-shadow:0 14px 30px rgba(15,63,61,.2);touch-action:manipulation}
+.sea::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:var(--areia);border-radius:50% 50% 0 0/100% 100% 0 0}
+.alvo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;font-family:var(--display);font-weight:800;font-size:clamp(18px,2.6vw,26px)}
+.alvo img{width:64px;height:64px;object-fit:contain;background:var(--branco);border-radius:50%;padding:6px;box-shadow:0 6px 14px rgba(15,63,61,.2)}
+.bub{position:absolute;left:0;top:0;border:0;padding:0;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.85),rgba(255,255,255,.18) 40%,rgba(255,255,255,.1) 66%,rgba(255,255,255,.4));box-shadow:inset 0 0 0 3px rgba(255,255,255,.6),0 6px 14px rgba(15,63,61,.14);display:grid;place-items:center;will-change:transform;touch-action:manipulation}
+.bub img{position:absolute;left:16%;top:16%;width:68%;height:68%;object-fit:contain;pointer-events:none}
+.bub.pop{animation:estoura .26s ease-out forwards}
+@keyframes estoura{to{transform:var(--t) scale(1.7);opacity:0}}
+.bub.oops img{animation:treme .35s}
+
+/* fim de jogo */
+.fim{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(15,63,61,.55)}
+.fim-box{width:min(560px,100%);background:var(--branco);border-radius:34px;padding:26px 22px 24px;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.35);max-height:92vh;overflow:auto}
+.fim-box h2{font-size:clamp(32px,6vw,48px);font-weight:800;color:var(--vermelho)}
+.fim-stars{display:flex;justify-content:center;gap:8px;margin:10px 0 6px}
+.fim-stars .star{width:46px;height:46px;animation:pop .5s var(--ease) both;animation-delay:calc(var(--i) * .15s)}
+@keyframes pop{from{transform:scale(0) rotate(-40deg)}}
+.fim-row{display:flex;flex-wrap:nowrap;justify-content:center;gap:2px clamp(2px,1vw,6px);margin:12px 0}
+.fim-row div{flex:1 1 0;min-width:0;max-width:58px;text-align:center}
+.fim-row img{width:100%;height:52px;object-fit:contain}
+.fim-row b{display:block;font-family:var(--display);font-weight:800;font-size:20px;color:var(--vermelho)}
+.fim-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:14px}
+.confete{position:fixed;top:-20px;z-index:90;width:10px;height:16px;pointer-events:none;animation:cai linear forwards}
+@keyframes cai{to{transform:translateY(110vh) rotate(var(--r,540deg))}}
+
+.foot{padding-top:24px;padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));text-align:center;font-size:13px;color:var(--tinta);opacity:.8}
+.foot p+p{margin-top:4px}
+.areia{height:46px;background:var(--areia);border-radius:50% 50% 0 0/100% 100% 0 0;position:relative;z-index:1;margin-top:10px}
+
+@media (prefers-reduced-motion:reduce){
+  .bubbles i,.mx,.cue{animation:none}
+  .mc-in,.gcard,.lv,.opt,.pc{transition:none}
+  .mc.ok,.fim-stars .star{animation:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-roof" viewBox="115.37 659.09 1769.26 513.51"><path fill="currentColor" d="M 1701.113281 1122.527344 L 1834.558594 1122.527344 L 1178.453125 709.164062 L 1044.957031 709.164062 L 388.796875 1122.527344 L 522.296875 1122.527344 L 1000.054688 821.582031 L 1477.757812 1122.527344 L 1611.203125 1122.527344 L 1066.75 779.527344 L 1111.703125 751.21875 Z M 821.601562 709.164062 L 165.441406 1122.527344 L 298.941406 1122.527344 L 955.042969 709.164062 Z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.8 2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17l-5.6 3.1 1.2-6.3L3 9.4l6.3-.8z" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-som" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></g></symbol>
+    <symbol id="i-mudo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></g></symbol>
+    <symbol id="i-seta" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="bubbles" id="bubbles" aria-hidden="true"></div>
+
+<header class="top band">
+  <a class="logo-chip" href="../" aria-label="Imobiliária Sperandio, voltar ao portal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="163.44 572.14 1713.12 825.70" role="img" aria-label="Sperandio Imobiliária, marca registrada">
+
+<path fill="#1C1C1B" d="M 515.726562 1271.351562 L 526.027344 1271.351562 L 526.027344 1349.164062 L 515.726562 1349.164062 Z M 515.726562 1271.351562 "></path>
+<path fill="#1C1C1B" d="M 576.472656 1349.164062 L 576.472656 1271.351562 L 591.972656 1271.351562 L 610.390625 1326.445312 C 612.089844 1331.578125 613.328125 1335.417969 614.105469 1337.96875 C 614.988281 1335.136719 616.367188 1330.980469 618.246094 1325.492188 L 636.875 1271.351562 L 650.730469 1271.351562 L 650.730469 1349.164062 L 640.800781 1349.164062 L 640.800781 1284.039062 L 618.191406 1349.164062 L 608.902344 1349.164062 L 586.398438 1282.921875 L 586.398438 1349.164062 Z M 576.472656 1349.164062 "></path>
+<path fill="#1C1C1B" d="M 707.4375 1311.425781 C 707.4375 1320.804688 709.964844 1328.1875 715.003906 1333.585938 C 720.046875 1338.980469 726.371094 1341.683594 733.980469 1341.683594 C 741.730469 1341.683594 748.109375 1338.957031 753.117188 1333.507812 C 758.125 1328.058594 760.628906 1320.324219 760.628906 1310.308594 C 760.628906 1303.976562 759.554688 1298.449219 757.417969 1293.722656 C 755.273438 1289 752.140625 1285.335938 748.019531 1282.738281 C 743.898438 1280.132812 739.269531 1278.832031 734.140625 1278.832031 C 726.847656 1278.832031 720.578125 1281.335938 715.324219 1286.34375 C 710.066406 1291.351562 707.4375 1299.710938 707.4375 1311.425781 M 696.824219 1311.265625 C 696.824219 1298.351562 700.292969 1288.238281 707.226562 1280.933594 C 714.160156 1273.625 723.117188 1269.972656 734.085938 1269.972656 C 741.269531 1269.972656 747.742188 1271.6875 753.511719 1275.117188 C 759.28125 1278.550781 763.679688 1283.335938 766.703125 1289.476562 C 769.730469 1295.617188 771.242188 1302.578125 771.242188 1310.363281 C 771.242188 1318.253906 769.648438 1325.316406 766.464844 1331.542969 C 763.277344 1337.769531 758.769531 1342.488281 752.929688 1345.6875 C 747.089844 1348.890625 740.792969 1350.492188 734.03125 1350.492188 C 726.710938 1350.492188 720.160156 1348.722656 714.394531 1345.183594 C 708.625 1341.644531 704.257812 1336.816406 701.28125 1330.691406 C 698.3125 1324.570312 696.824219 1318.09375 696.824219 1311.265625 "></path>
+<path fill="#1C1C1B" d="M 827 1339.984375 L 846.371094 1339.984375 C 849.699219 1339.984375 852.035156 1339.855469 853.378906 1339.613281 C 855.75 1339.1875 857.730469 1338.476562 859.324219 1337.488281 C 860.917969 1336.496094 862.226562 1335.054688 863.253906 1333.164062 C 864.277344 1331.269531 864.789062 1329.082031 864.789062 1326.605469 C 864.789062 1323.703125 864.046875 1321.183594 862.5625 1319.042969 C 861.074219 1316.898438 859.011719 1315.398438 856.378906 1314.53125 C 853.738281 1313.664062 849.949219 1313.230469 844.992188 1313.230469 L 827 1313.230469 Z M 827 1304.046875 L 843.824219 1304.046875 C 848.386719 1304.046875 851.660156 1303.746094 853.644531 1303.144531 C 856.261719 1302.367188 858.238281 1301.074219 859.5625 1299.269531 C 860.886719 1297.464844 861.554688 1295.203125 861.554688 1292.472656 C 861.554688 1289.894531 860.933594 1287.617188 859.695312 1285.652344 C 858.457031 1283.691406 856.683594 1282.347656 854.386719 1281.621094 C 852.085938 1280.894531 848.140625 1280.53125 842.550781 1280.53125 L 827 1280.53125 Z M 816.699219 1349.164062 L 816.699219 1271.351562 L 845.890625 1271.351562 C 851.835938 1271.351562 856.609375 1272.140625 860.199219 1273.710938 C 863.789062 1275.285156 866.601562 1277.710938 868.636719 1280.984375 C 870.675781 1284.257812 871.691406 1287.683594 871.691406 1291.253906 C 871.691406 1294.582031 870.789062 1297.714844 868.984375 1300.648438 C 867.179688 1303.585938 864.457031 1305.960938 860.808594 1307.765625 C 865.515625 1309.144531 869.136719 1311.496094 871.664062 1314.820312 C 874.191406 1318.148438 875.460938 1322.074219 875.460938 1326.605469 C 875.460938 1330.25 874.6875 1333.636719 873.148438 1336.773438 C 871.613281 1339.902344 869.707031 1342.316406 867.445312 1344.019531 C 865.179688 1345.714844 862.339844 1346.996094 858.921875 1347.863281 C 855.511719 1348.730469 851.328125 1349.164062 846.371094 1349.164062 Z M 816.699219 1349.164062 "></path>
+<path fill="#1C1C1B" d="M 923.992188 1271.351562 L 934.292969 1271.351562 L 934.292969 1349.164062 L 923.992188 1349.164062 Z M 923.992188 1271.351562 "></path>
+<path fill="#1C1C1B" d="M 984.632812 1349.164062 L 984.632812 1271.351562 L 994.929688 1271.351562 L 994.929688 1339.984375 L 1033.253906 1339.984375 L 1033.253906 1349.164062 Z M 984.632812 1349.164062 "></path>
+<path fill="#1C1C1B" d="M 1079.878906 1271.351562 L 1090.175781 1271.351562 L 1090.175781 1349.164062 L 1079.878906 1349.164062 Z M 1079.878906 1271.351562 "></path>
+<path fill="#1C1C1B" d="M 1161.269531 1266.570312 L 1168.328125 1251.710938 L 1180.855469 1251.710938 L 1169.179688 1266.570312 Z M 1154.847656 1317.210938 L 1181.230469 1317.210938 L 1173.109375 1295.660156 C 1170.628906 1289.117188 1168.789062 1283.734375 1167.585938 1279.523438 C 1166.59375 1284.511719 1165.199219 1289.46875 1163.394531 1294.382812 Z M 1132.394531 1349.164062 L 1162.277344 1271.351562 L 1173.375 1271.351562 L 1205.222656 1349.164062 L 1193.488281 1349.164062 L 1184.414062 1325.597656 L 1151.875 1325.597656 L 1143.332031 1349.164062 Z M 1132.394531 1349.164062 "></path>
+<path fill="#1C1C1B" d="M 1256.519531 1305.695312 L 1278.648438 1305.695312 C 1283.359375 1305.695312 1287.039062 1305.207031 1289.691406 1304.234375 C 1292.347656 1303.257812 1294.367188 1301.703125 1295.742188 1299.5625 C 1297.121094 1297.421875 1297.816406 1295.097656 1297.816406 1292.582031 C 1297.816406 1288.902344 1296.476562 1285.875 1293.804688 1283.503906 C 1291.132812 1281.136719 1286.914062 1279.949219 1281.144531 1279.949219 L 1256.519531 1279.949219 Z M 1246.222656 1349.164062 L 1246.222656 1271.351562 L 1280.71875 1271.351562 C 1287.65625 1271.351562 1292.929688 1272.050781 1296.542969 1273.445312 C 1300.152344 1274.84375 1303.035156 1277.3125 1305.191406 1280.851562 C 1307.351562 1284.390625 1308.429688 1288.300781 1308.429688 1292.582031 C 1308.429688 1298.105469 1306.644531 1302.753906 1303.066406 1306.539062 C 1299.496094 1310.328125 1293.972656 1312.734375 1286.507812 1313.761719 C 1289.230469 1315.070312 1291.300781 1316.359375 1292.714844 1317.636719 C 1295.722656 1320.394531 1298.574219 1323.847656 1301.261719 1327.988281 L 1314.796875 1349.164062 L 1301.847656 1349.164062 L 1291.550781 1332.976562 C 1288.542969 1328.300781 1286.0625 1324.730469 1284.121094 1322.25 C 1282.171875 1319.777344 1280.429688 1318.042969 1278.890625 1317.050781 C 1277.351562 1316.0625 1275.785156 1315.371094 1274.195312 1314.980469 C 1273.023438 1314.734375 1271.113281 1314.609375 1268.460938 1314.609375 L 1256.519531 1314.609375 L 1256.519531 1349.164062 Z M 1246.222656 1349.164062 "></path>
+<path fill="#1C1C1B" d="M 1358.929688 1271.351562 L 1369.226562 1271.351562 L 1369.226562 1349.164062 L 1358.929688 1349.164062 Z M 1358.929688 1271.351562 "></path>
+<path fill="#1C1C1B" d="M 1433.898438 1317.210938 L 1460.28125 1317.210938 L 1452.160156 1295.660156 C 1449.679688 1289.113281 1447.839844 1283.734375 1446.636719 1279.523438 C 1445.644531 1284.511719 1444.25 1289.46875 1442.445312 1294.386719 Z M 1411.445312 1349.164062 L 1441.328125 1271.351562 L 1452.425781 1271.351562 L 1484.273438 1349.164062 L 1472.539062 1349.164062 L 1463.464844 1325.597656 L 1430.925781 1325.597656 L 1422.382812 1349.164062 Z M 1411.445312 1349.164062 "></path>
+<path fill="#1C1C1B" d="M 352.355469 1100.320312 C 344.898438 1092.671875 329.367188 1085.652344 305.746094 1079.265625 L 303.132812 1078.539062 C 292.195312 1075.632812 284.8125 1072.585938 280.992188 1069.390625 C 277.167969 1066.199219 275.257812 1061.941406 275.257812 1056.617188 C 275.257812 1051.386719 277.4375 1047.105469 281.789062 1043.765625 C 286.148438 1040.425781 291.808594 1038.757812 298.777344 1038.757812 C 305.554688 1038.757812 312.402344 1040.183594 319.324219 1043.039062 C 326.242188 1045.894531 332.992188 1050.128906 339.578125 1055.746094 L 357.726562 1014.074219 C 348.335938 1007.6875 338.386719 1002.917969 327.890625 999.773438 C 317.386719 996.628906 306.277344 995.054688 294.566406 995.054688 C 272.886719 995.054688 255.242188 1001.46875 241.644531 1014.289062 C 228.046875 1027.117188 221.242188 1043.691406 221.242188 1064.019531 C 221.242188 1079.699219 225.550781 1092.042969 234.164062 1101.042969 C 242.78125 1110.046875 257.492188 1117.355469 278.304688 1122.96875 C 293.5 1127.03125 303.253906 1130.976562 307.5625 1134.800781 C 311.867188 1138.621094 314.023438 1144.070312 314.023438 1151.132812 C 314.023438 1157.523438 311.53125 1162.796875 306.542969 1166.957031 C 301.5625 1171.121094 295.195312 1173.203125 287.453125 1173.203125 C 279.125 1173.203125 270.78125 1170.785156 262.410156 1165.941406 C 254.035156 1161.105469 245.539062 1153.796875 236.929688 1144.019531 L 210.792969 1187.140625 C 222.019531 1197.886719 233.707031 1205.777344 245.859375 1210.808594 C 258.003906 1215.839844 271.484375 1218.355469 286.292969 1218.355469 C 310.972656 1218.355469 330.71875 1211.511719 345.53125 1197.8125 C 360.339844 1184.117188 367.746094 1165.992188 367.746094 1143.4375 C 367.746094 1134.535156 366.4375 1126.429688 363.828125 1119.117188 C 361.210938 1111.8125 357.382812 1105.542969 352.355469 1100.320312 "></path>
+<path fill="#1C1C1B" d="M 476.722656 1090.082031 C 471.203125 1093.90625 461.476562 1095.816406 447.535156 1095.816406 L 436.5 1095.816406 L 436.5 1045.871094 L 448.121094 1045.871094 C 461.859375 1045.871094 471.441406 1047.757812 476.867188 1051.53125 C 482.285156 1055.308594 484.996094 1061.648438 484.996094 1070.554688 C 484.996094 1079.75 482.238281 1086.261719 476.722656 1090.082031 M 517.082031 1015.527344 C 510.40625 1009.910156 502.273438 1005.941406 492.695312 1003.621094 C 483.109375 1001.296875 466.457031 1000.136719 442.746094 1000.136719 L 382.199219 1000.136719 L 382.199219 1212.695312 L 436.5 1212.695312 L 436.5 1142.566406 L 456.828125 1142.566406 C 474.734375 1142.566406 487.757812 1141.550781 495.882812 1139.519531 C 504.015625 1137.484375 511.078125 1134.144531 517.082031 1129.5 C 525.019531 1123.308594 531.023438 1115.394531 535.089844 1105.761719 C 539.152344 1096.132812 541.1875 1084.976562 541.1875 1072.296875 C 541.1875 1060.390625 539.128906 1049.574219 535.015625 1039.847656 C 530.898438 1030.117188 524.925781 1022.011719 517.082031 1015.527344 "></path>
+<path fill="#1C1C1B" d="M 552.898438 1212.695312 L 683.140625 1212.695312 L 683.140625 1165.070312 L 609.378906 1165.070312 L 609.378906 1129.207031 L 678.925781 1129.207031 L 678.925781 1083.621094 L 609.378906 1083.621094 L 609.378906 1046.742188 L 683.140625 1046.742188 L 683.140625 1000.136719 L 552.898438 1000.136719 Z M 552.898438 1212.695312 "></path>
+<path fill="#1C1C1B" d="M 1405.414062 1151.058594 C 1394.960938 1160.402344 1378.359375 1165.070312 1355.609375 1165.070312 L 1345.886719 1165.070312 L 1345.886719 1047.613281 L 1355.609375 1047.613281 C 1378.359375 1047.613281 1394.960938 1052.355469 1405.414062 1061.839844 C 1415.871094 1071.328125 1421.09375 1086.234375 1421.09375 1106.558594 C 1421.09375 1126.886719 1415.871094 1141.71875 1405.414062 1151.058594 M 1438.953125 1020.316406 C 1428.59375 1013.058594 1416.570312 1007.882812 1402.875 1004.78125 C 1389.175781 1001.683594 1365.824219 1000.136719 1332.816406 1000.136719 L 1288.535156 1000.136719 L 1288.535156 1212.695312 L 1342.546875 1212.695312 C 1370.226562 1212.695312 1390.652344 1211.171875 1403.816406 1208.121094 C 1416.980469 1205.074219 1428.695312 1199.96875 1438.953125 1192.804688 C 1452.40625 1183.414062 1462.621094 1171.390625 1469.589844 1156.722656 C 1476.5625 1142.058594 1480.042969 1125.339844 1480.042969 1106.558594 C 1480.042969 1087.785156 1476.5625 1071.0625 1469.589844 1056.398438 C 1462.621094 1041.734375 1452.40625 1029.707031 1438.953125 1020.316406 "></path>
+<path fill="#1C1C1B" d="M 1491.757812 1212.621094 L 1550.269531 1212.621094 L 1550.269531 1000.0625 L 1491.757812 1000.0625 Z M 1491.757812 1212.621094 "></path>
+<path fill="#1C1C1B" d="M 1715.523438 1151.570312 C 1705.019531 1163.378906 1691.734375 1169.28125 1675.667969 1169.28125 C 1659.308594 1169.28125 1645.953125 1163.429688 1635.59375 1151.714844 C 1625.238281 1140.003906 1620.0625 1125.046875 1620.0625 1106.851562 C 1620.0625 1088.945312 1625.3125 1074.0625 1635.8125 1062.207031 C 1646.3125 1050.347656 1659.597656 1044.417969 1675.667969 1044.417969 C 1691.445312 1044.417969 1704.65625 1050.371094 1715.304688 1062.277344 C 1725.953125 1074.183594 1731.273438 1089.042969 1731.273438 1106.851562 C 1731.273438 1124.855469 1726.023438 1139.757812 1715.523438 1151.570312 M 1780.714844 1063.875 C 1775.050781 1050.421875 1766.898438 1038.464844 1756.25 1028.011719 C 1745.597656 1017.558594 1733.285156 1009.5 1719.300781 1003.835938 C 1705.308594 998.175781 1690.765625 995.34375 1675.667969 995.34375 C 1660.46875 995.34375 1645.925781 998.175781 1632.039062 1003.835938 C 1618.148438 1009.5 1605.925781 1017.558594 1595.378906 1028.011719 C 1584.4375 1038.5625 1576.136719 1050.542969 1570.476562 1063.945312 C 1564.8125 1077.355469 1561.980469 1091.65625 1561.980469 1106.851562 C 1561.980469 1121.953125 1564.8125 1136.230469 1570.476562 1149.683594 C 1576.136719 1163.136719 1584.4375 1175.140625 1595.378906 1185.6875 C 1605.925781 1196.144531 1618.148438 1204.203125 1632.039062 1209.863281 C 1645.925781 1215.523438 1660.46875 1218.355469 1675.667969 1218.355469 C 1690.671875 1218.355469 1705.144531 1215.523438 1719.082031 1209.863281 C 1733.019531 1204.203125 1745.40625 1196.144531 1756.25 1185.6875 C 1766.992188 1175.140625 1775.171875 1163.183594 1780.789062 1149.824219 C 1786.398438 1136.46875 1789.207031 1122.144531 1789.207031 1106.851562 C 1789.207031 1091.65625 1786.378906 1077.332031 1780.714844 1063.875 "></path>
+<path fill="#1C1C1B" d="M 925.800781 1133.273438 L 947.148438 1063.148438 C 948.402344 1058.792969 949.640625 1054.242188 950.847656 1049.5 C 952.058594 1044.757812 953.292969 1039.773438 954.550781 1034.546875 C 956.390625 1042 957.890625 1048.097656 959.054688 1052.839844 C 960.214844 1057.585938 961.132812 1061.019531 961.8125 1063.148438 L 983.445312 1133.273438 Z M 790.183594 1094.21875 C 784.421875 1098.480469 775.300781 1100.609375 762.816406 1100.609375 L 752.066406 1100.609375 L 752.066406 1044.710938 L 763.6875 1044.710938 C 776.363281 1044.710938 785.390625 1046.960938 790.761719 1051.460938 C 796.136719 1055.960938 798.820312 1063.535156 798.820312 1074.183594 C 798.820312 1083.28125 795.9375 1089.960938 790.183594 1094.21875 M 1213.511719 1131.210938 L 1117.25 1000.136719 L 1061.347656 1000.136719 L 1061.347656 1204.941406 L 990.558594 1000.136719 L 917.960938 1000.136719 L 851.96875 1191.449219 L 808.40625 1127.027344 C 823.890625 1123.644531 835.675781 1116.796875 843.757812 1106.484375 C 851.839844 1096.179688 855.882812 1082.800781 855.882812 1066.34375 C 855.882812 1055.503906 853.824219 1045.578125 849.710938 1036.578125 C 845.59375 1027.574219 839.714844 1020.171875 832.070312 1014.363281 C 825.296875 1009.234375 817.238281 1005.578125 807.894531 1003.402344 C 798.554688 1001.226562 782.027344 1000.136719 758.3125 1000.136719 L 697.765625 1000.136719 L 697.765625 1212.695312 L 752.066406 1212.695312 L 752.066406 1129.5 L 800.855469 1212.695312 L 902.28125 1212.695312 L 913.316406 1174.652344 L 995.640625 1174.652344 L 1006.386719 1212.695312 L 1117.25 1212.695312 L 1117.199219 1081.027344 L 1213.511719 1212.695312 L 1269.121094 1212.695312 L 1269.121094 1000.136719 L 1213.511719 1000.136719 Z M 1213.511719 1131.210938 "></path>
+<path fill="#E20B1A" d="M 1526.414062 929.855469 L 1626.609375 929.855469 L 1133.988281 619.492188 L 1033.753906 619.492188 L 541.09375 929.855469 L 641.328125 929.855469 L 1000.042969 703.894531 L 1358.714844 929.855469 L 1458.90625 929.855469 L 1050.117188 672.320312 L 1083.871094 651.066406 Z M 1526.414062 929.855469 "></path>
+<path fill="#E20B1A" d="M 866.054688 619.492188 L 373.390625 929.855469 L 473.625 929.855469 L 966.246094 619.492188 Z M 866.054688 619.492188 "></path>
+<g aria-hidden="true"><circle cx="1833" cy="1029" r="34" fill="none" stroke="#1C1C1B" stroke-width="6.5"/><text x="1833" y="1045" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="44" fill="#1C1C1B">R</text></g></svg></a>
+  <div class="top-r">
+    <button class="btn" id="som" type="button" aria-pressed="true" aria-label="Som ligado. Tocar para desligar."><svg aria-hidden="true"><use id="som-u" href="#i-som"/></svg><span id="som-t">Som ligado</span></button>
+    <a class="btn" href="../"><svg aria-hidden="true"><use href="#i-seta"/></svg><span class="t-l">Voltar ao portal</span><span class="t-c">Portal</span></a>
+  </div>
+</header>
+
+<main class="band">
+  <div class="wrap">
+
+    <section id="tela-inicio">
+      <div class="hero">
+        <h1>Cantinho dos <em>Mascotes</em></h1>
+        <p>Brinque com os amigos do mar de Itapoá. São 5 jogos e 5 níveis em cada um.</p>
+        <div class="nome" id="nome-mascotes" aria-label="Os nove mascotes formam o nome SPERANDIO"></div>
+      </div>
+      <h2 class="sec-t">Escolha um jogo</h2>
+      <div class="games" id="lista-jogos"></div>
+    </section>
+
+    <section id="tela-niveis" hidden>
+      <div class="lvhead">
+        <h2 id="niv-titulo"></h2>
+        <p id="niv-desc"></p>
+      </div>
+      <div class="lvs" id="lista-niveis"></div>
+      <p class="back"><button class="btn" id="niv-voltar" type="button"><svg aria-hidden="true"><use href="#i-seta"/></svg>Outros jogos</button></p>
+    </section>
+
+    <section id="tela-jogo" hidden>
+      <div class="gbar">
+        <button class="btn" id="jogo-voltar" type="button"><svg aria-hidden="true"><use href="#i-seta"/></svg>Níveis</button>
+        <h2 id="jogo-titulo"></h2>
+        <span class="sub" id="jogo-nivel"></span>
+      </div>
+      <div class="arena" id="arena"></div>
+    </section>
+
+  </div>
+</main>
+
+<div class="areia" aria-hidden="true"></div>
+<footer class="foot band">
+  <p>Sem cadastro, sem anúncios e sem coleta de dados. As estrelas ficam só neste aparelho.</p>
+  <p>Imobiliária Sperandio® · CRECI-SC 4484-J · Itapoá, SC</p>
+</footer>
+
+<div class="fim" id="fim" role="dialog" aria-modal="true" aria-labelledby="fim-t" hidden>
+  <div class="fim-box">
+    <h2 id="fim-t">Muito bem!</h2>
+    <div class="fim-stars" id="fim-estrelas" aria-live="polite"></div>
+    <p id="fim-msg" style="font-size:18px"></p>
+    <div class="fim-row" id="fim-linha"></div>
+    <div class="fim-btns">
+      <button class="btn red" id="fim-prox" type="button">Próximo nível</button>
+      <button class="btn" id="fim-de-novo" type="button">Jogar de novo</button>
+      <button class="btn" id="fim-jogos" type="button">Outros jogos</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- dados ---------- */
+  var M = [
+    { k: 's', l: 'S', n: 'Água-viva' }, { k: 'p', l: 'P', n: 'Baleia' }, { k: 'e', l: 'E', n: 'Cavalo-marinho' },
+    { k: 'r', l: 'R', n: 'Camarão' }, { k: 'a', l: 'A', n: 'Caranguejo-ermitão' }, { k: 'n', l: 'N', n: 'Moreia' },
+    { k: 'd', l: 'D', n: 'Golfinho' }, { k: 'i', l: 'I', n: 'Peixe' }, { k: 'o', l: 'O', n: 'Baiacu' }
+  ];
+  var NIVEIS = ['Marolinha', 'Maré mansa', 'Maré cheia', 'Ressaca', 'Mar aberto'];
+  var JOGOS = [
+    { id: 'memoria', t: 'Jogo da memória', img: 'a', d: 'Vire as cartas e encontre os pares de mascotes.', ds: 'Vire as cartas e encontre os pares. Quanto maior o nível, mais cartas.' },
+    { id: 'nome', t: 'Monte o nome', img: 's', d: 'Arraste cada mascote para a sua letra de SPERANDIO.', ds: 'Cada mascote tem a forma de uma letra. Coloque todos no lugar certo.' },
+    { id: 'sombra', t: 'Quem sou eu?', img: 'o', d: 'Descubra o mascote pela sombra.', ds: 'Veja a sombra e escolha quem ela é. Nos níveis altos, só aparece um pedacinho do mascote.' },
+    { id: 'puzzle', t: 'Quebra-cabeça', img: 'p', d: 'Troque as peças até formar o mascote.', ds: 'Toque em uma peça e depois em outra para trocar. Monte o mascote inteiro.' },
+    { id: 'bolhas', t: 'Estoure as bolhas', img: 'd', d: 'Toque nas bolhas com o mascote pedido.', ds: 'Estoure só as bolhas do mascote que aparece no alto da tela.' }
+  ];
+  function src(k) { return 'img/' + k + '.webp'; }
+  function porK(k) { return M.filter(function (m) { return m.k === k; })[0]; }
+
+  /* ---------- utilidades ---------- */
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function rand(n) { return Math.floor(Math.random() * n); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = rand(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function star(on) { return '<svg class="star ' + (on ? 'on' : 'off') + '" aria-hidden="true"><use href="#i-star"/></svg>'; }
+  function estrelas(n) { return star(n >= 1) + star(n >= 2) + star(n >= 3); }
+  var guarda = {
+    ler: function () { try { return JSON.parse(localStorage.getItem('cantinho_v1') || '{}'); } catch (e) { return {}; } },
+    gravar: function (o) { try { localStorage.setItem('cantinho_v1', JSON.stringify(o)); } catch (e) { /* sem armazenamento: segue sem salvar */ } }
+  };
+  function estrelasDe(g, l) { return guarda.ler()[g + '_' + l] || 0; }
+  function salvar(g, l, n) { var o = guarda.ler(), k = g + '_' + l; if ((o[k] || 0) < n) { o[k] = n; guarda.gravar(o); } }
+
+  /* ---------- bolhas de fundo ---------- */
+  (function () {
+    var b = $('#bubbles'); if (reduce) return;
+    for (var i = 0; i < 16; i++) {
+      var s = 10 + rand(46), d = el('i');
+      d.style.cssText = 'left:' + rand(100) + '%;width:' + s + 'px;height:' + s + 'px;animation-duration:' + (14 + rand(18)) + 's;animation-delay:-' + rand(24) + 's;--dx:' + (rand(80) - 40) + 'px';
+      b.appendChild(d);
+    }
+  })();
+
+  /* ---------- música e efeitos sonoros (gerados no navegador, sem arquivos de áudio) ---------- */
+  var Som = (function () {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var ctx = null, mestre = null, bus = null, analisador = null, ligado = true, desejada = 'geral', atual = null, faixa = null;
+    try { if (localStorage.getItem('cantinho_som') === '0') ligado = false; } catch (e) { }
+    function midi(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+    function P(str) { return str.split(/\s+/).map(function (x) { return x === '-' ? null : parseInt(x, 10); }); }
+    function grau(d, esc, raiz) { var n = esc.length, o = Math.floor(d / n), r = ((d % n) + n) % n; return raiz + esc[r] + 12 * o; }
+    function nota(dest, f, t, dur, tipo, vol, filtro, ataque) {
+      var o = ctx.createOscillator(), g = ctx.createGain(), a = ataque || 0.012;
+      o.type = tipo; o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      if (filtro) { var bf = ctx.createBiquadFilter(); bf.type = 'lowpass'; bf.frequency.value = filtro; o.connect(bf); bf.connect(g); } else o.connect(g);
+      g.connect(dest); o.start(t); o.stop(t + dur + 0.05);
+    }
+    function pad(dest, f, t, dur, vol) {
+      [-5, 5].forEach(function (c) {
+        var o = ctx.createOscillator(), g = ctx.createGain(), bf = ctx.createBiquadFilter();
+        o.type = 'sine'; o.frequency.setValueAtTime(f, t); o.detune.value = c;
+        bf.type = 'lowpass'; bf.frequency.value = 900;
+        g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + dur * 0.3); g.gain.linearRampToValueAtTime(0.0001, t + dur);
+        o.connect(bf); bf.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + 0.1);
+      });
+    }
+    function bolha(dest, t) {
+      var o = ctx.createOscillator(), g = ctx.createGain(), f = 500 + Math.random() * 700;
+      o.type = 'sine'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 1.9, t + 0.14);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.05, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.25);
+    }
+    function mel(F) {
+      F.lead = P(F.lead); F.baixo = P(F.baixo); F.pd = 60 / F.bpm / 2;
+      F.passo = function (i, t, d) {
+        var k = i % F.lead.length, q = F.pd, dg = F.lead[k], b = F.baixo[k % F.baixo.length];
+        if (dg != null) {
+          var m = grau(dg, F.esc, F.raiz);
+          nota(d, midi(m), t, q * (F.dur || 1.7), F.tipo, F.vol || 0.09, F.filtro || 2600);
+          if (F.oitava) nota(d, midi(m + 12), t, q * 1.1, 'sine', 0.03, 3000);
+        }
+        if (b != null) nota(d, midi(grau(b, F.esc, F.raiz - 12)), t, q * 3.2, 'sine', 0.11, 520, 0.02);
+        if (F.extra) F.extra(i, t, d, q);
+      };
+      return F;
+    }
+    // música única, animada, em dó maior: melodia de xilofone, baixo saltitante (um, dois, um, dois) e percussão leve
+    var MAJ = [0, 2, 4, 5, 7, 9, 11];
+    var MEL = P('4 - 4 4 5 4 2 -  2 - 2 4 4 2 0 -  3 - 3 5 7 5 3 -  4 - 2 0 2 4 7 -  8 - 8 7 6 4 6 -  5 - 5 7 5 3 5 -  4 - 6 8 6 4 1 -  0 2 4 7 4 2 0 -');
+    var ACOR = [[48, [60, 64, 67]], [48, [60, 64, 67]], [53, [60, 65, 69]], [48, [60, 64, 67]], [55, [59, 62, 67]], [53, [60, 65, 69]], [55, [59, 62, 67]], [48, [60, 64, 67]]];
+    var bufRuido = null;
+    function ruido(dest, t, dur, vol, tipo, freq, q) {
+      var s2 = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      s2.buffer = bufRuido; f.type = tipo; f.frequency.value = freq; if (q) f.Q.value = q;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      s2.connect(f); f.connect(g); g.connect(dest); s2.start(t); s2.stop(t + dur + 0.02);
+    }
+    function bumbo(dest, t) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.12);
+      g.gain.setValueAtTime(0.42, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2); o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.24);
+    }
+    function xilo(dest, m, t, vol) {
+      nota(dest, midi(m), t, 0.34, 'triangle', vol, 4300, 0.004);
+      nota(dest, midi(m + 12), t, 0.16, 'sine', vol * 0.35, 5200, 0.004);
+    }
+    var FX = {
+      geral: {
+        bpm: 128, pd: 60 / 128 / 2,
+        passo: function (i, t, d) {
+          var k = i % 64, bar = (k / 8) | 0, p = k % 8, volta = ((i / 64) | 0) % 2, A = ACOR[bar], dg = MEL[k];
+          if (dg != null) {
+            var m = grau(dg, MAJ, 60);
+            xilo(d, m, t, 0.15);
+            if (volta) xilo(d, grau(dg - 2, MAJ, 60), t, 0.07);   // na segunda volta entra uma voz mais grave junto
+          }
+          if (p === 0) nota(d, midi(A[0]), t, 0.24, 'triangle', 0.2, 800, 0.006);
+          if (p === 4) nota(d, midi(A[0] + 7), t, 0.22, 'triangle', 0.17, 800, 0.006);
+          if (p === 2 || p === 6) A[1].forEach(function (n) { nota(d, midi(n), t, 0.13, 'triangle', 0.045, 2200, 0.004); });
+          if (p === 0 || p === 4) bumbo(d, t);
+          if (p === 2 || p === 6) ruido(d, t, 0.09, 0.1, 'bandpass', 1900, 0.8);
+          ruido(d, t, 0.04, p % 2 ? 0.035 : 0.06, 'highpass', 7500);
+          if (k === 62 || k === 63) ruido(d, t, 0.07, 0.07, 'bandpass', 2600, 0.8);   // pequeno floreio no fim da volta
+        }
+      }
+    };
+    function garantir() {
+      if (ctx) return true; if (!AC) return false;
+      try { ctx = new AC(); } catch (e) { ctx = null; return false; }
+      mestre = ctx.createGain(); mestre.gain.value = ligado ? 0.9 : 0;
+      analisador = ctx.createAnalyser(); analisador.fftSize = 512; var comp = ctx.createDynamicsCompressor(); mestre.connect(analisador); analisador.connect(comp); comp.connect(ctx.destination);
+      bus = ctx.createGain(); bus.gain.value = 0.95; bus.connect(mestre);
+      var eco = ctx.createDelay(1), fb = ctx.createGain(), lp = ctx.createBiquadFilter(), env = ctx.createGain();
+      eco.delayTime.value = 0.31; fb.gain.value = 0.32; lp.type = 'lowpass'; lp.frequency.value = 1800; env.gain.value = 0.18;
+      bus.connect(env); env.connect(eco); eco.connect(lp); lp.connect(fb); fb.connect(eco); lp.connect(mestre);
+      bufRuido = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate); var rd = bufRuido.getChannelData(0); for (var q = 0; q < rd.length; q++) rd[q] = Math.random() * 2 - 1;
+      return true;
+    }
+    function iniciar(id) {
+      var F = FX.geral, g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, ctx.currentTime); g.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.2); g.connect(bus);
+      var st = { g: g, i: 0, prox: ctx.currentTime + 0.2 };
+      st.tm = setInterval(function () { while (st.prox < ctx.currentTime + 0.5) { F.passo(st.i, st.prox, g); st.prox += F.pd; st.i++; } }, 90);
+      return st;
+    }
+    function parar(st) {
+      if (!st) return; clearInterval(st.tm);
+      var t = ctx.currentTime; st.g.gain.cancelScheduledValues(t); st.g.gain.setValueAtTime(st.g.gain.value, t); st.g.gain.linearRampToValueAtTime(0.0001, t + 0.8);
+      setTimeout(function () { try { st.g.disconnect(); } catch (e) { } }, 1800);
+    }
+    function tocar() {
+      var id = 'geral'; desejada = id;
+      if (!ctx || !ligado || atual === id) return;
+      parar(faixa); faixa = iniciar(id); atual = id;
+    }
+    function sfx(tipo) {
+      if (!ctx || !ligado) return;
+      var t = ctx.currentTime + 0.01, d = mestre;
+      if (tipo === 'ok') { nota(d, 880, t, 0.2, 'triangle', 0.16, 3200); nota(d, 1318, t + 0.09, 0.28, 'triangle', 0.16, 3500); }
+      else if (tipo === 'err') { nota(d, 233, t, 0.22, 'sine', 0.18, 900); nota(d, 196, t + 0.11, 0.28, 'sine', 0.18, 900); }
+      else if (tipo === 'tick') nota(d, 660, t, 0.09, 'triangle', 0.1, 2500);
+      else if (tipo === 'pop') { var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(900, t); o.frequency.exponentialRampToValueAtTime(240, t + 0.1); g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12); o.connect(g); g.connect(d); o.start(t); o.stop(t + 0.15); }
+      else if (tipo === 'win') [523, 659, 784, 1047, 1319].forEach(function (f, k) { nota(d, f, t + k * 0.11, 0.35, 'triangle', 0.15, 3600); });
+    }
+    function ui() {
+      var b = document.getElementById('som'); if (!b) return;
+      b.setAttribute('aria-pressed', ligado ? 'true' : 'false');
+      b.setAttribute('aria-label', ligado ? 'Som ligado. Tocar para desligar.' : 'Som desligado. Tocar para ligar.');
+      document.getElementById('som-t').textContent = ligado ? 'Som ligado' : 'Som desligado';
+      document.getElementById('som-u').setAttribute('href', ligado ? '#i-som' : '#i-mudo');
+    }
+    function alternar() {
+      ligado = !ligado;
+      try { localStorage.setItem('cantinho_som', ligado ? '1' : '0'); } catch (e) { }
+      if (ligado) {
+        if (garantir()) { if (ctx.state === 'suspended') ctx.resume(); mestre.gain.setTargetAtTime(0.9, ctx.currentTime, 0.05); atual = null; tocar(desejada); }
+      } else if (ctx) { mestre.gain.setTargetAtTime(0, ctx.currentTime, 0.05); parar(faixa); faixa = null; atual = null; }
+      ui();
+    }
+    function gesto() {
+      window.removeEventListener('pointerdown', gesto, true); window.removeEventListener('keydown', gesto, true);
+      if (!ligado || !garantir()) return;
+      if (ctx.state === 'suspended') ctx.resume();
+      tocar(desejada);
+    }
+    window.addEventListener('pointerdown', gesto, true); window.addEventListener('keydown', gesto, true);
+    document.addEventListener('visibilitychange', function () { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (ligado) ctx.resume(); });
+    function nivel() {
+      if (!analisador) return -1;
+      var a = new Float32Array(analisador.fftSize); analisador.getFloatTimeDomainData(a);
+      var s = 0; for (var i = 0; i < a.length; i++) s += a[i] * a[i]; return Math.sqrt(s / a.length);
+    }
+    return { tocar: tocar, sfx: sfx, alternar: alternar, ui: ui, nivel: nivel, estado: function () { return { ligado: ligado, atual: atual, ctx: ctx ? ctx.state : 'sem' }; } };
+  })();
+  document.getElementById('som').addEventListener('click', function () { Som.alternar(); });
+  Som.ui(); window.__som = Som;
+
+  /* ---------- telas ---------- */
+  var tI = $('#tela-inicio'), tN = $('#tela-niveis'), tJ = $('#tela-jogo'), arena = $('#arena'), fim = $('#fim');
+  var atual = null, limpar = null;
+  function mostrar(t) { [tI, tN, tJ].forEach(function (x) { x.hidden = x !== t; }); window.scrollTo(0, 0); }
+  function parar() { if (limpar) { try { limpar(); } catch (e) { } limpar = null; } arena.innerHTML = ''; fim.hidden = true; }
+
+  function inicio() {
+    parar(); atual = null; Som.tocar('mar');
+    var nm = $('#nome-mascotes'); nm.innerHTML = '';
+    M.forEach(function (m, i) {
+      var d = el('div', 'mx', '<img src="' + src(m.k) + '" alt="' + m.n + '" width="108" height="118"><b aria-hidden="true">' + m.l + '</b>');
+      d.style.setProperty('--i', i); nm.appendChild(d);
+    });
+    var lj = $('#lista-jogos'); lj.innerHTML = '';
+    JOGOS.forEach(function (j) {
+      var tot = 0; for (var l = 1; l <= 5; l++) tot += estrelasDe(j.id, l);
+      var b = el('button', 'gcard',
+        '<span class="gimg"><img src="' + src(j.img) + '" alt="" width="88" height="88"></span><h3>' + j.t + '</h3><p>' + j.d + '</p>' +
+        '<span class="gstar">' + estrelas(tot >= 15 ? 3 : tot >= 8 ? 2 : tot >= 1 ? 1 : 0) + '&nbsp;' + tot + ' de 15</span>');
+      b.type = 'button'; b.setAttribute('aria-label', j.t + '. ' + tot + ' de 15 estrelas');
+      b.addEventListener('click', function () { location.hash = j.id; });
+      lj.appendChild(b);
+    });
+    mostrar(tI);
+  }
+
+  function niveis(j) {
+    parar(); atual = { j: j }; Som.tocar('mar');
+    $('#niv-titulo').textContent = j.t; $('#niv-desc').textContent = j.ds;
+    var ln = $('#lista-niveis'); ln.innerHTML = '';
+    for (var l = 1; l <= 5; l++) (function (l) {
+      var dif = ''; for (var d = 1; d <= 5; d++) dif += '<i class="' + (d <= l ? 'on' : '') + '"></i>';
+      var b = el('button', 'lv', '<b>' + l + '</b><span>' + NIVEIS[l - 1] + '</span><span class="dif" aria-hidden="true">' + dif + '</span><span class="gstar">' + estrelas(estrelasDe(j.id, l)) + '</span>');
+      b.type = 'button'; b.setAttribute('aria-label', 'Nível ' + l + ', ' + NIVEIS[l - 1] + '. ' + estrelasDe(j.id, l) + ' de 3 estrelas');
+      b.addEventListener('click', function () { location.hash = j.id + '-' + l; });
+      ln.appendChild(b);
+    })(l);
+    mostrar(tN);
+  }
+
+  function jogar(j, nivel) {
+    parar(); atual = { j: j, l: nivel }; Som.tocar(j.id);
+    $('#jogo-titulo').textContent = j.t; $('#jogo-nivel').textContent = 'Nível ' + nivel + ' · ' + NIVEIS[nivel - 1];
+    mostrar(tJ);
+    limpar = GAMES[j.id](nivel, arena, { finish: terminar });
+  }
+
+  function rota() {
+    var h = (location.hash || '').slice(1), p = h.split('-'), j = JOGOS.filter(function (x) { return x.id === p[0]; })[0];
+    if (!j) return inicio();
+    var l = parseInt(p[1], 10);
+    if (l >= 1 && l <= 5) return jogar(j, l);
+    niveis(j);
+  }
+  window.addEventListener('hashchange', rota);
+  $('#niv-voltar').addEventListener('click', function () { location.hash = ''; if (!location.hash) rota(); });
+  $('#jogo-voltar').addEventListener('click', function () { location.hash = atual.j.id; });
+
+  /* ---------- fim de jogo ---------- */
+  var CORES = ['#E20B1A', '#F5B301', '#47C0B8', '#FFFFFF', '#F2766B', '#4F7BE8'];
+  function confete() {
+    if (reduce) return;
+    for (var i = 0; i < 44; i++) {
+      var c = el('i', 'confete');
+      c.style.cssText = 'left:' + rand(100) + '%;background:' + CORES[rand(CORES.length)] + ';animation-duration:' + (1.8 + Math.random() * 1.6) + 's;animation-delay:' + (Math.random() * .5) + 's;--r:' + (360 + rand(500)) + 'deg';
+      document.body.appendChild(c); setTimeout(function (x) { return function () { x.remove(); }; }(c), 4200);
+    }
+  }
+  function terminar(n, extra) {
+    var j = atual.j, l = atual.l; extra = extra || {};
+    salvar(j.id, l, n); Som.sfx('win');
+    $('#fim-estrelas').innerHTML = estrelas(n);
+    $('#fim-estrelas').querySelectorAll('.star').forEach(function (s, i) { s.style.setProperty('--i', i); });
+    $('#fim-msg').textContent = extra.msg || (n === 3 ? 'Perfeito! Você foi demais.' : n === 2 ? 'Que bom! Dá para ganhar as três estrelas.' : 'Você conseguiu! Que tal tentar de novo?');
+    var linha = $('#fim-linha'); linha.innerHTML = '';
+    (extra.mascotes || []).forEach(function (m) { linha.appendChild(el('div', '', '<img src="' + src(m.k) + '" alt="' + m.n + '"><b>' + m.l + '</b>')); });
+    $('#fim-prox').hidden = l >= 5;
+    fim.hidden = false; confete();
+    setTimeout(function () { (l >= 5 ? $('#fim-de-novo') : $('#fim-prox')).focus(); }, 60);
+  }
+  $('#fim-prox').addEventListener('click', function () { location.hash = atual.j.id + '-' + (atual.l + 1); });
+  $('#fim-de-novo').addEventListener('click', function () { var h = atual.j.id + '-' + atual.l; fim.hidden = true; if (location.hash === '#' + h) rota(); else location.hash = h; });
+  $('#fim-jogos').addEventListener('click', function () { location.hash = ''; if (!location.hash) rota(); });
+
+  var GAMES = {};
+
+  /* ---------- 1. jogo da memória ---------- */
+  GAMES.memoria = function (nivel, A, api) {
+    var pares = [3, 4, 6, 8, 9][nivel - 1], total = pares * 2, pick = shuffle(M).slice(0, pares);
+    var pequeno = window.innerWidth < 600;
+    var cols = pequeno ? { 6: 3, 8: 4, 12: 3, 16: 4, 18: 3 }[total] : { 6: 3, 8: 4, 12: 4, 16: 4, 18: 6 }[total];
+    A.innerHTML = '<div class="info"><span>Jogadas: <b id="mv">0</b></span><span>Pares: <b id="pr">0</b> de ' + pares + '</span></div><div class="mgrid" style="--cols:' + cols + '"></div>';
+    var grade = $('.mgrid', A), primeira = null, trava = false, jogadas = 0, achados = 0, timers = [];
+    shuffle(pick.concat(pick)).forEach(function (m) {
+      var b = el('button', 'mc', '<span class="mc-in"><span class="mc-b"><svg viewBox="0 0 1769.26 513.51" aria-hidden="true"><use href="#i-roof" width="1769.26" height="513.51"/></svg></span><span class="mc-f"><img src="' + src(m.k) + '" alt=""></span></span>');
+      b.type = 'button'; b.dataset.k = m.k; b.setAttribute('aria-label', 'Carta virada para baixo');
+      b.addEventListener('click', function () {
+        if (trava || b.classList.contains('up')) return;
+        b.classList.add('up'); b.setAttribute('aria-label', m.n); Som.sfx('tick');
+        if (!primeira) { primeira = { b: b, m: m }; return; }
+        jogadas++; $('#mv', A).textContent = jogadas;
+        if (primeira.m.k === m.k) {
+          primeira.b.classList.add('ok'); b.classList.add('ok'); primeira = null; achados++; Som.sfx('ok'); $('#pr', A).textContent = achados;
+          if (achados === pares) timers.push(setTimeout(function () {
+            var r = jogadas / pares, n = r <= 1.7 ? 3 : r <= 2.8 ? 2 : 1;
+            api.finish(n, { mascotes: nivel === 5 ? M : pick, msg: nivel === 5 ? 'Os 9 mascotes se juntaram e formaram o nome SPERANDIO!' : 'Você achou todos os pares.' });
+          }, 700));
+        } else {
+          trava = true; var p = primeira; primeira = null; Som.sfx('err');
+          timers.push(setTimeout(function () { p.b.classList.remove('up'); b.classList.remove('up'); p.b.setAttribute('aria-label', 'Carta virada para baixo'); b.setAttribute('aria-label', 'Carta virada para baixo'); trava = false; }, 900));
+        }
+      });
+      grade.appendChild(b);
+    });
+    return function () { timers.forEach(clearTimeout); };
+  };
+
+  /* ---------- 2. monte o nome ---------- */
+  GAMES.nome = function (nivel, A, api) {
+    var faltam = [3, 5, 7, 9, 9][nivel - 1], letras = [1, 1, 1, 0.45, 0][nivel - 1];
+    var ordem = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8]), sorteadas = ordem.slice(0, faltam), certos = 0, erros = 0, sel = null, tm = null;
+    A.innerHTML = '<p class="dica">Leve cada mascote até a sua letra.</p><div class="palavra" id="pal" aria-hidden="true"></div><div class="slots" id="slots"></div><div class="tray" id="tray" aria-label="Mascotes para colocar"></div><p class="peek"><button class="btn" id="espiar" type="button">Espiar o nome</button></p>';
+    var pal = $('#pal', A), slots = $('#slots', A), tray = $('#tray', A);
+    pal.innerHTML = M.map(function (m) { return '<span>' + m.l + '</span>'; }).join('');
+    if (letras < 1) pal.style.visibility = 'hidden';
+    $('#espiar', A).addEventListener('click', function () { pal.style.visibility = 'visible'; clearTimeout(tm); tm = setTimeout(function () { if (letras < 1) pal.style.visibility = 'hidden'; }, 2600); });
+    var slotEls = [];
+    M.forEach(function (m, i) {
+      var falta = sorteadas.indexOf(i) >= 0;
+      var s = el('button', 'slot' + (falta ? '' : ' full'), (letras > 0 ? '<span class="lt" style="--lo:' + (falta ? letras : 1) + '">' + m.l + '</span>' : '') + (falta ? '' : '<img src="' + src(m.k) + '" alt="">'));
+      s.type = 'button'; s.setAttribute('aria-label', 'Lugar da letra ' + (letras > 0 || !falta ? m.l : (i + 1) + 'ª') + (falta ? ', vazio' : ', ' + m.n));
+      s.dataset.i = i; slotEls.push(s); slots.appendChild(s);
+    });
+    function tentar(tile, i) {
+      var s = slotEls[i]; if (!s || s.classList.contains('full')) return;
+      var mi = +tile.dataset.i;
+      if (mi === i) {
+        Som.sfx('ok'); s.classList.add('full'); s.innerHTML = (letras > 0 ? '<span class="lt">' + M[i].l + '</span>' : '') + '<img src="' + src(M[i].k) + '" alt="">';
+        s.setAttribute('aria-label', 'Letra ' + M[i].l + ', ' + M[i].n); tile.remove(); sel = null; certos++;
+        if (certos === faltam) setTimeout(function () { api.finish(erros <= 1 ? 3 : erros <= 4 ? 2 : 1, { mascotes: M, msg: 'O nome SPERANDIO está completo!' }); }, 600);
+      } else {
+        Som.sfx('err'); erros++; if (!reduce) { tile.classList.remove('shake'); void tile.offsetWidth; tile.classList.add('shake'); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); }
+      }
+    }
+    slotEls.forEach(function (s) { s.addEventListener('click', function () { if (sel) tentar(sel, +s.dataset.i); }); });
+    // peças para arrastar (também funcionam com toque e teclado: escolher a peça e depois o lugar)
+    var ghost = null;
+    shuffle(sorteadas).forEach(function (i) {
+      var m = M[i], t = el('button', 'tile', '<img src="' + src(m.k) + '" alt="' + m.n + '">');
+      t.type = 'button'; t.dataset.i = i; t.setAttribute('aria-label', m.n + ', escolher e depois tocar no lugar da letra');
+      var x0, y0, arrastando = false;
+      t.addEventListener('pointerdown', function (e) { x0 = e.clientX; y0 = e.clientY; arrastando = false; try { t.setPointerCapture(e.pointerId); } catch (er) { } });
+      t.addEventListener('pointermove', function (e) {
+        if (x0 == null) return;
+        if (!arrastando && Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0) > 8) { arrastando = true; t.classList.add('drag'); ghost = el('div', 'ghost', '<img src="' + src(m.k) + '" alt="">'); document.body.appendChild(ghost); }
+        if (arrastando && ghost) { ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px'; }
+      });
+      function solta(e) {
+        if (x0 == null) return; x0 = null;
+        if (arrastando) {
+          if (ghost) { ghost.remove(); ghost = null; } t.classList.remove('drag');
+          var alvo = document.elementFromPoint(e.clientX, e.clientY), s = alvo && alvo.closest ? alvo.closest('.slot') : null;
+          if (s) tentar(t, +s.dataset.i);
+        }
+      }
+      t.addEventListener('pointerup', solta); t.addEventListener('pointercancel', solta);
+      t.addEventListener('click', function () { if (arrastando) { arrastando = false; return; } tray.querySelectorAll('.tile').forEach(function (o) { o.classList.remove('sel'); }); if (sel === t) { sel = null; return; } sel = t; t.classList.add('sel'); });
+      tray.appendChild(t);
+    });
+    return function () { clearTimeout(tm); if (ghost) ghost.remove(); };
+  };
+
+  /* ---------- 3. quem sou eu ---------- */
+  GAMES.sombra = function (nivel, A, api) {
+    var nOp = [3, 3, 4, 5, 6][nivel - 1], zoom = [1, 1, 2.1, 2.9, 3.8][nivel - 1], ordem = shuffle(M).slice(0, 5), rodada = 0, erros = 0, tm = null;
+    function rodar() {
+      var resp = ordem[rodada], ops = shuffle([resp].concat(shuffle(M.filter(function (m) { return m.k !== resp.k; })).slice(0, nOp - 1)));
+      var ox = 38 + rand(26), oy = 38 + rand(26), travado = false;
+      var sombra = zoom === 1;
+      A.innerHTML = '<p class="dica">' + (sombra ? 'Quem é esta sombra?' : 'De quem é este pedacinho?') + ' <span style="opacity:.7">(' + (rodada + 1) + ' de 5)</span></p><div class="stage"><img class="' + (sombra ? 'sil' : '') + '" id="sil" src="' + src(resp.k) + '" alt="' + (sombra ? 'Sombra de um mascote' : 'Pedaço ampliado de um mascote') + '" style="transform:scale(' + zoom + ');transform-origin:' + ox + '% ' + oy + '%"></div><div class="opts" id="opts"></div>';
+      var opts = $('#opts', A);
+      ops.forEach(function (m) {
+        var b = el('button', 'opt', '<img src="' + src(m.k) + '" alt=""><b>' + m.n + '</b>'); b.type = 'button';
+        b.addEventListener('click', function () {
+          if (travado) return;
+          if (m.k === resp.k) {
+            travado = true; Som.sfx('ok'); b.classList.add('certo'); var im = $('#sil', A); im.classList.remove('sil'); im.style.transform = 'scale(1)'; im.alt = resp.n;
+            tm = setTimeout(function () { rodada++; if (rodada >= 5) api.finish(erros <= 1 ? 3 : erros <= 4 ? 2 : 1, { mascotes: ordem, msg: 'Você descobriu os 5 mascotes!' }); else rodar(); }, 1500);
+          } else { erros++; Som.sfx('err'); b.classList.add('erro'); if (!reduce) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); } }
+        });
+        opts.appendChild(b);
+      });
+    }
+    rodar();
+    return function () { clearTimeout(tm); };
+  };
+
+  /* ---------- 4. quebra-cabeça (troca de peças) ---------- */
+  GAMES.puzzle = function (nivel, A, api) {
+    var cfg = [[2, 2], [2, 3], [3, 3], [3, 4], [4, 4]][nivel - 1], m = M[rand(9)], cols = m.k === 'i' ? Math.max(2, Math.ceil(cfg[0] * 0.67)) : cfg[0], rows = cfg[1], total = cols * rows;
+    var pw = Math.floor(Math.min((Math.min(window.innerWidth - 56, 520)) / cols, (window.innerHeight * 0.58) / rows, 150));
+    var bw = pw * cols, bh = pw * rows, pos = [], sel = -1, jogadas = 0, i;
+    for (i = 0; i < total; i++) pos.push(i);
+    do { pos = shuffle(pos); } while (pos.every(function (v, k) { return v === k; }));
+    A.innerHTML = '<div class="pzwrap"><div class="info"><span>Trocas: <b id="tr">0</b></span></div><div class="pz" id="pz" style="grid-template-columns:repeat(' + cols + ',' + pw + 'px)"></div><div class="peek"><button class="btn" id="ver" type="button">Ver o modelo</button></div><div class="modelo" id="modelo" hidden><img src="' + src(m.k) + '" alt="Modelo: ' + m.n + '"></div></div>';
+    var pz = $('#pz', A), mod = $('#modelo', A), tm = null;
+    $('#ver', A).addEventListener('click', function () { mod.hidden = false; clearTimeout(tm); tm = setTimeout(function () { mod.hidden = true; }, 2600); });
+    function desenha() {
+      pz.innerHTML = '';
+      pos.forEach(function (id, slot) {
+        var cx = id % cols, cy = Math.floor(id / cols);
+        var b = el('button', 'pc' + (id === slot ? ' ok' : '') + (slot === sel ? ' sel' : ''), '<span class="art" style="width:' + bw + 'px;height:' + bh + 'px;left:' + (-cx * pw) + 'px;top:' + (-cy * pw) + 'px"><img src="' + src(m.k) + '" alt=""></span>');
+        b.type = 'button'; b.style.width = pw + 'px'; b.style.height = pw + 'px';
+        b.setAttribute('aria-label', 'Peça ' + (slot + 1) + ' de ' + total + (id === slot ? ', no lugar certo' : ''));
+        b.addEventListener('click', function () {
+          if (sel < 0) { sel = slot; desenha(); return; }
+          if (sel === slot) { sel = -1; desenha(); return; }
+          var t = pos[sel]; pos[sel] = pos[slot]; pos[slot] = t; sel = -1; jogadas++; Som.sfx('tick'); $('#tr', A).textContent = jogadas; desenha();
+          if (pos.every(function (v, k) { return v === k; })) setTimeout(function () { var r = jogadas / total; api.finish(r <= 1 ? 3 : r <= 1.8 ? 2 : 1, { mascotes: [m], msg: 'Quebra-cabeça montado: ' + m.n + '!' }); }, 500);
+        });
+        pz.appendChild(b);
+      });
+    }
+    desenha();
+    return function () { clearTimeout(tm); };
+  };
+
+  /* ---------- 5. estoure as bolhas ---------- */
+  GAMES.bolhas = function (nivel, A, api) {
+    var cfg = [
+      { need: 5, v: 55, ev: 1400, s: 116, k: 3 }, { need: 6, v: 70, ev: 1200, s: 106, k: 4 }, { need: 8, v: 85, ev: 1000, s: 98, k: 5 },
+      { need: 10, v: 105, ev: 850, s: 90, k: 7 }, { need: 12, v: 125, ev: 700, s: 84, k: 9 }][nivel - 1];
+    var alvo = M[rand(9)], outros = shuffle(M.filter(function (m) { return m.k !== alvo.k; })).slice(0, cfg.k - 1), pontos = 0, erros = 0, acabou = false, raf = 0, bolhas = [], tAnt = 0, acum = cfg.ev * 0.6;
+    A.innerHTML = '<div class="alvo"><img src="' + src(alvo.k) + '" alt=""><span>Estoure as bolhas deste amigo: ' + alvo.n + '</span></div><div class="info"><span>Estouradas: <b id="pt">0</b> de ' + cfg.need + '</span></div><div class="sea" id="sea"></div>';
+    var sea = $('#sea', A);
+    function nova() {
+      var m = Math.random() < 0.4 ? alvo : outros[rand(outros.length)], W = sea.clientWidth, H = sea.clientHeight;
+      var d = el('button', 'bub', '<img src="' + src(m.k) + '" alt="">'); d.type = 'button'; d.setAttribute('aria-label', 'Bolha: ' + m.n);
+      d.style.width = d.style.height = cfg.s + 'px';
+      var b = { el: d, m: m, x: 10 + Math.random() * (W - cfg.s - 20), y: H + 10, ph: Math.random() * 6.28, w: 0.8 + Math.random() * 0.8 };
+      d.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); if (acabou || b.morta) return;
+        if (m.k === alvo.k) {
+          b.morta = true; d.style.setProperty('--t', d.style.transform); d.classList.add('pop'); setTimeout(function () { d.remove(); }, 280);
+          pontos++; Som.sfx('pop'); $('#pt', A).textContent = pontos;
+          if (pontos >= cfg.need) { acabou = true; setTimeout(function () { api.finish(erros <= 2 ? 3 : erros <= 6 ? 2 : 1, { mascotes: [alvo], msg: 'Todas as bolhas do ' + alvo.n.toLowerCase() + ' estouraram!' }); }, 350); }
+        } else { erros++; Som.sfx('err'); d.classList.remove('oops'); void d.offsetWidth; d.classList.add('oops'); }
+      });
+      sea.appendChild(d); bolhas.push(b);
+    }
+    function loop(t) {
+      raf = requestAnimationFrame(loop);
+      var dt = tAnt ? Math.min((t - tAnt) / 1000, 0.05) : 0; tAnt = t;
+      acum += dt * 1000; if (!acabou && acum >= cfg.ev) { acum = 0; nova(); }
+      bolhas = bolhas.filter(function (b) {
+        if (b.morta) return false;
+        b.y -= cfg.v * dt; b.ph += b.w * dt;
+        if (b.y < -cfg.s - 10) { b.el.remove(); return false; }
+        b.el.style.transform = 'translate3d(' + (b.x + Math.sin(b.ph) * 16).toFixed(1) + 'px,' + b.y.toFixed(1) + 'px,0)'; return true;
+      });
+    }
+    if (reduce) { cfg.v *= 0.6; }
+    raf = requestAnimationFrame(loop);
+    return function () { cancelAnimationFrame(raf); acabou = true; };
+  };
+
+  rota();
+})();
+</script>
+
+</body>
+</html>
